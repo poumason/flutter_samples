@@ -5,29 +5,37 @@ import 'package:flutter/material.dart';
 /*
  * https://gist.github.com/collinjackson/4fddbfa2830ea3ac033e34622f278824
 */
-class CustomIndicator extends AnimatedWidget {
-  CustomIndicator({
+/// An indicator showing the currently selected page of a PageController
+class DotsIndicator extends AnimatedWidget {
+  DotsIndicator({
     this.controller,
     this.itemCount,
+    this.onPageSelected,
     this.color: Colors.white,
   }) : super(listenable: controller);
 
+  /// The PageController that this DotsIndicator is representing.
   final PageController controller;
+
+  /// The number of items managed by the PageController
   final int itemCount;
+
+  /// Called when a dot is tapped
+  final ValueChanged<int> onPageSelected;
+
+  /// The color of the dots.
+  ///
+  /// Defaults to `Colors.white`.
   final Color color;
 
-  static const double _kDotSpacing = 25.0;
-  static const double _kMaxZoom = 2.0;
-  static const double _itemWidth = 10.0;
-  static const double _itemHeight = 1.5;
+  // The base size of the dots
+  static const double _kDotSize = 8.0;
 
-  @override
-  Widget build(BuildContext context) {
-    return new Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: new List<Widget>.generate(itemCount, _buildDot),
-    );
-  }
+  // The increase in the size of the selected dot
+  static const double _kMaxZoom = 2.0;
+
+  // The distance between the center of each dot
+  static const double _kDotSpacing = 25.0;
 
   Widget _buildDot(int index) {
     double selectedness = Curves.easeOut.transform(
@@ -36,49 +44,29 @@ class CustomIndicator extends AnimatedWidget {
         1.0 - ((controller.page ?? controller.initialPage) - index).abs(),
       ),
     );
-
     double zoom = 1.0 + (_kMaxZoom - 1.0) * selectedness;
-    // 計算每一個 item 顔色的透明度
-    var alpha = (255 * selectedness).toInt();
-    // 設定透明度的最低值
-    if (alpha < 102) {
-      alpha = 102;
-    }
-
     return new Container(
       width: _kDotSpacing,
       child: new Center(
-        child: Container(
-          // 自己畫一個長方形
-          child: CustomPaint(
-            painter: ShapesPainter(alpha: alpha),
-            size: Size(_itemWidth * zoom, _itemHeight * zoom),
+        child: new Material(
+          color: color,
+          type: MaterialType.circle,
+          child: new Container(
+            width: _kDotSize * zoom,
+            height: _kDotSize * zoom,
+            child: new InkWell(
+              onTap: () => onPageSelected(index),
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-class ShapesPainter extends CustomPainter {
-  int alpha = 255;
-
-  ShapesPainter({this.alpha}) : super();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint();
-    // set the color property of the paint
-    paint.color = Colors.white.withAlpha(alpha);
-    // center of the canvas is (x,y) => (width/2, height/2)
-    var center = Offset(size.width / 2, size.height / 2);
-
-    // draw the circle on centre of canvas having radius 75.0
-    canvas.drawRect(
-        Rect.fromCenter(center: center, width: size.width, height: size.height),
-        paint);
+  Widget build(BuildContext context) {
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: new List<Widget>.generate(itemCount, _buildDot),
+    );
   }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

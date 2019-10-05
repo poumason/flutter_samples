@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pageviewer_sample/indicator.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,6 +46,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   PageController _controller;
+  ScrollController _scrollController;
   var pageOffset = 0.0;
   var screenWidth = 0.0;
 
@@ -56,10 +58,14 @@ class _MyHomePageState extends State<MyHomePage> {
     'http://0rz.tw/HuKP2'
   ];
 
+  var texts = ['Text1', 'Text2', 'Text3', 'Text4', 'Text5'];
+
   void _offsetChanged() {
     // 每次的移動都重新計算對應的偏移值與特效
     setState(() {
       pageOffset = _controller.offset / screenWidth;
+      //
+      // _scrollController.jumpTo(_controller.offset);
     });
 
     print(
@@ -67,11 +73,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _controller = PageController(initialPage: 0);
-	  // 監聽 PageController 的 Scroller 變化
+    // 監聽 PageController 的 Scroller 變化
     _controller.addListener(_offsetChanged);
+    // _scrollController = ScrollController();
   }
 
   @override
@@ -83,34 +97,61 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: PageView.builder(
-          controller: _controller,
-          itemCount: images.length,
-          itemBuilder: (context, index) {
-            // 計算每次異動時左邊的 Page 是哪個 index
-            var currentLeftPageIndex = pageOffset.floor();
-            // 計算現在畫面 Offset 佔的比例
-            var currentPageOffsetPercent = pageOffset - currentLeftPageIndex;
-            // 加入移動的特效
-            return Transform.translate(
-              // 因爲是水平滑動，所以設定 offset 的 X 值，因爲 Page 固定不動，所以要先用 pageOffset 減去 index 得到 負數
-			        // 如果是垂直滑動，請設定 offset 的 Y 值
-              offset: Offset((pageOffset - index) * screenWidth, 0),
-              child: Opacity(
-                // 如果現在左邊的 index 等於正要建立的 index，則讓它透明度變淡，因爲它要退出畫面了
-				        // 相反地是要顯示，則使用原本的 currentPageOffsetPercent
-                opacity: currentLeftPageIndex == index
-                    ? 1 - currentPageOffsetPercent
-                    : currentPageOffsetPercent,
-                child: Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: NetworkImage(images[index]),
-                            fit: BoxFit.cover))),
-              ),
-            );
-            //return Image.network(images[index]);
-          },
+        body: Stack(
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            PageView.builder(
+              controller: _controller,
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                // 計算每次異動時左邊的 Page 是哪個 index
+                var currentLeftPageIndex = pageOffset.floor();
+                // 計算現在畫面 Offset 佔的比例
+                var currentPageOffsetPercent =
+                    pageOffset - currentLeftPageIndex;
+                // 加入移動的特效
+                return Transform.translate(
+                  // 因爲是水平滑動，所以設定 offset 的 X 值，因爲 Page 固定不動，所以要先用 pageOffset 減去 index 得到 負數
+                  // 如果是垂直滑動，請設定 offset 的 Y 值
+                  offset: Offset((pageOffset - index) * screenWidth, 0),
+                  child: Opacity(
+                    // 如果現在左邊的 index 等於正要建立的 index，則讓它透明度變淡，因爲它要退出畫面了
+                    // 相反地是要顯示，則使用原本的 currentPageOffsetPercent
+                    opacity: currentLeftPageIndex == index
+                        ? 1 - currentPageOffsetPercent
+                        : currentPageOffsetPercent,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: NetworkImage(images[index]),
+                                fit: BoxFit.cover))),
+                  ),
+                );
+              },
+            ),
+            DotsIndicator(
+              color: Colors.white,
+              itemCount: images.length,
+              controller: _controller,
+            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 30),
+            //   child: ListView.builder(
+            //     controller: _scrollController,
+            //     scrollDirection: Axis.horizontal,
+            //     itemCount: texts.length,
+            //     itemBuilder: (context, index) {
+            //       return Container(
+            //           width: MediaQuery.of(context).size.width,
+            //           padding: const EdgeInsets.only(left: 10),
+            //           child: Text(
+            //             texts[index],
+            //             style: TextStyle(fontSize: 20, color: Colors.white),
+            //           ));
+            //     },
+            //   ),
+            // )
+          ],
         ));
   }
 }
