@@ -4,21 +4,11 @@ import 'package:pageviewer_sample/indicator.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter PageView Sample'),
@@ -29,15 +19,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -45,8 +26,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  PageController _controller;
-  ScrollController _scrollController;
+  final PageController _controller = PageController();
+  final ScrollController _scrollController = ScrollController();
   var pageOffset = 0.0;
   var screenWidth = 0.0;
 
@@ -58,14 +39,14 @@ class _MyHomePageState extends State<MyHomePage> {
     'http://0rz.tw/HuKP2'
   ];
 
-  var texts = ['Text1', 'Text2', 'Text3', 'Text4', 'Text5'];
+  var texts = ['GOW 1', 'GOW 2', 'GOW 3', 'GEARS OF WAR JUDGMENT', 'GEARS OF WAR:ULTIMATE EDITION'];
 
   void _offsetChanged() {
     // 每次的移動都重新計算對應的偏移值與特效
     setState(() {
       pageOffset = _controller.offset / screenWidth;
-      //
-      // _scrollController.jumpTo(_controller.offset);
+      // 利用 PageController.offset 來移動
+      _scrollController.jumpTo(_controller.offset);
     });
 
     print(
@@ -81,11 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    super.initState();
-    _controller = PageController(initialPage: 0);
     // 監聽 PageController 的 Scroller 變化
     _controller.addListener(_offsetChanged);
-    // _scrollController = ScrollController();
+    super.initState();
   }
 
   @override
@@ -98,8 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: Stack(
-          alignment: Alignment.topCenter,
-          children: <Widget>[
+          alignment: AlignmentDirectional.bottomStart,
+          children: [
             PageView.builder(
               controller: _controller,
               itemCount: images.length,
@@ -129,28 +108,32 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
-            DotsIndicator(
-              color: Colors.white,
-              itemCount: images.length,
-              controller: _controller,
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 30),
-            //   child: ListView.builder(
-            //     controller: _scrollController,
-            //     scrollDirection: Axis.horizontal,
-            //     itemCount: texts.length,
-            //     itemBuilder: (context, index) {
-            //       return Container(
-            //           width: MediaQuery.of(context).size.width,
-            //           padding: const EdgeInsets.only(left: 10),
-            //           child: Text(
-            //             texts[index],
-            //             style: TextStyle(fontSize: 20, color: Colors.white),
-            //           ));
-            //     },
-            //   ),
-            // )
+            Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: DotsIndicator(
+                  color: Colors.white,
+                  itemCount: images.length,
+                  controller: _controller,
+                )),
+            // 利用 IgnorePointer 忽略 ListView 的滑動
+            IgnorePointer(
+                child: ListView.builder(
+              // 改利用 ScrollController 來操作 ListView
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: texts.length,
+              itemBuilder: (context, index) {
+                return Container(
+                    alignment: Alignment.bottomLeft,
+                    // 設定 width 與 Page 一致
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.only(left: 10, bottom: 50),
+                    child: Text(
+                      texts[index],
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ));
+              },
+            ))
           ],
         ));
   }

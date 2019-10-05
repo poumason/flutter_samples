@@ -47,16 +47,14 @@ class DotsIndicator extends AnimatedWidget {
     double zoom = 1.0 + (_kMaxZoom - 1.0) * selectedness;
     return new Container(
       width: _kDotSpacing,
-      child: new Center(
-        child: new Material(
-          color: color,
-          type: MaterialType.circle,
-          child: new Container(
-            width: _kDotSize * zoom,
-            height: _kDotSize * zoom,
-            child: new InkWell(
-              onTap: () => onPageSelected(index),
-            ),
+      child: new Material(
+        color: color,
+        type: MaterialType.circle,
+        child: new Container(
+          width: _kDotSize * zoom,
+          height: _kDotSize * zoom,
+          child: new InkWell(
+            onTap: () => onPageSelected(index),
           ),
         ),
       ),
