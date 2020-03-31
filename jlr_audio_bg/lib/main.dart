@@ -111,14 +111,21 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             ),
             RaisedButton(
               child: Text("AudioPlayer"),
-              onPressed: () {
-                AudioService.start(
+              onPressed: () async {
+                await AudioService.start(
                   backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
                   androidNotificationChannelName: 'Audio Service Demo',
                   notificationColor: 0xFF2196f3,
                   androidNotificationIcon: 'mipmap/ic_launcher',
                   //enableQueue: true,
                 );
+
+                await AudioService.customAction("playChannel", {
+                  "title": "Ancient Capital 古都電台",
+                  "url":
+                      "https://radio-hichannel.cdn.hinet.net/live/pool/hich-ra000001/ra-hls/index.m3u8?token1=toCGFiD4TksJklIdxfNSfw&token2=mU7O_Y5Rr3kOvmQvBcAu5g&expire1=1585636377389&expire2=1585636406189",
+                  "album": "精品音樂"
+                });
               },
             )
           ],

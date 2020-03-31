@@ -17,19 +17,6 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onStart() async {
-    final _queue = <MediaItem>[
-      MediaItem(
-        //id: "https://radio-hichannel.cdn.hinet.net/live/pool/hich-ra000002/ra-hls/index.m3u8?token1=sRaiVoSov64EOkU2lBpfhw&token2=8-pC413TdMkPImaOLFhTEw&expire1=1585542655515&expire2=1585542684315",
-        id: " https://radio-hichannel.cdn.hinet.net/live/pool/hich-ra000040/ra-hls/index.m3u8?token1=fVHDrArUhsmCJNEvl-8BAQ&token2=nbX8j4JFYdoVG5HM_gZD1A&expire1=1585554251140&expire2=1585554279940",
-        album: "Science Friday",
-        title: "A Salute To Head-Scratching Science",
-        artist: "Science Friday and WNYC Studios",
-        duration: 5739820,
-        artUri:
-            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-      ),
-    ];
-
     var playerStateSubscription =
         _audioPlayer.onPlayerStateChanged.listen((event) async {
       var state = _stateToBasicState(event);
@@ -42,16 +29,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       }
     });
 
-    AudioServiceBackground.setQueue(_queue);
-
-    var mediaItem = _queue[0];
-
-    AudioServiceBackground.setMediaItem(mediaItem);
-
-    await _audioPlayer.stop();
-    // await _audioPlayer.setUrl(mediaItem.id);
-    await _audioPlayer.play(mediaItem.id);
-    onPlay();
+    // await _playWithStarting();
 
     await _completer.future;
 
@@ -131,5 +109,50 @@ class AudioPlayerTask extends BackgroundAudioTask {
         stopControl,
       ];
     }
+  }
+
+  void onCustomAction(String name, dynamic arguments) async {
+    print(name);
+    print(arguments);
+    if (name == "playChannel") {
+      var mediaItem = MediaItem(
+          title: arguments["title"],
+          id: arguments["url"],
+          album: arguments["album"],
+          artist: "Science Friday and WNYC Studios",
+          duration: 5739820,
+          artUri:
+              "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg");
+
+      await AudioServiceBackground.setMediaItem(mediaItem);
+      await _audioPlayer.stop();
+      await _audioPlayer.play(mediaItem.id);
+      onPlay();
+    }
+  }
+
+  Future<void> _playWithStarting() async {
+    final _queue = <MediaItem>[
+      MediaItem(
+          id:
+              'https://radio-hichannel.cdn.hinet.net/live/pool/hich-ra000001/ra-hls/index.m3u8?token1=toCGFiD4TksJklIdxfNSfw&token2=mU7O_Y5Rr3kOvmQvBcAu5g&expire1=1585636377389&expire2=1585636406189',
+          album: "Science Friday",
+          title: "A Salute To Head-Scratching Science",
+          artist: "Science Friday and WNYC Studios",
+          duration: 5739820,
+          artUri:
+              "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
+    ];
+
+    AudioServiceBackground.setQueue(_queue);
+
+    var mediaItem = _queue[0];
+
+    AudioServiceBackground.setMediaItem(mediaItem);
+
+    await _audioPlayer.stop();
+    // await _audioPlayer.setUrl(mediaItem.id);
+    await _audioPlayer.play(mediaItem.id);
+    onPlay();
   }
 }
