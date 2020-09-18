@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import './display_content_bloc.dart';
+import './ui/transcript_container.dart';
 
 import 'model/stt.dart';
 import 'player/player_bloc.dart';
 import 'player/progress_slider.dart';
-import 'ui/transcript_container_widget.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,34 +28,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class MyHomePage extends StatelessWidget {
   final String title;
+  final PlayerBloc playerBloc = PlayerBloc();
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  PlayerBloc playerBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    playerBloc = PlayerBloc();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
+        appBar: AppBar(title: Text(title)),
         body: Column(
           children: [
             Expanded(
@@ -64,8 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (!snapshot.hasData) {
                   return Container();
                 } else {
-                  return TranscriptContainerWidget(
-                      playerBloc, snapshot.data.words);
+                  return BlocProvider<DisplayContentBloc>(
+                    create: (BuildContext context) => DisplayContentBloc(),
+                    child: TranscriptContainer(playerBloc, snapshot.data),
+                  );
                 }
               },
             )),

@@ -42,6 +42,7 @@ class TranscriptContainerWidgetState extends State<TranscriptContainerWidget> {
   @override
   Widget build(Object context) {
     return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
       child: Text.rich(
         TextSpan(
           style: TextStyle(
