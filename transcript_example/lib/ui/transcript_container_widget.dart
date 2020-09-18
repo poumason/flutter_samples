@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:transcript_example/player/player_bloc.dart';
-import 'package:transcript_example/stt.dart';
+import 'package:transcript_example/ui/word_widget.dart';
+import '../model/word_data_wrapper.dart';
+import '../model/stt.dart';
+import '../player/player_bloc.dart';
 
 class TranscriptContainerWidget extends StatefulWidget {
   final PlayerBloc playerBloc;
@@ -44,33 +46,32 @@ class TranscriptContainerWidgetState extends State<TranscriptContainerWidget> {
         TextSpan(
           style: TextStyle(
               fontSize: 25, color: Color.fromARGB(0xFF, 0x88, 0x88, 0x88)),
-          children:
-              Iterable.generate(_wordDataKey.length, (i) => i).expand((i) {
-            print(_wordDataKey[i].data.word);
-            return [
-              WidgetSpan(
-                child: SizedBox.fromSize(
-                  size: Size.zero,
-                  key: _wordDataKey[i].key,
-                ),
-              ),
-              TextSpan(
-                text: _wordDataKey[i].data.word,
-                style: _isPlayed(_wordDataKey[i].data.offsetInSeconds),
-              ),
-            ];
-          }).toList(),
+          children: Iterable.generate(_wordDataKey.length, (i) => i)
+              .expand((i) => [
+                    WidgetSpan(
+                        child: WordWidget(
+                      widget.playerBloc,
+                      _wordDataKey[i].data,
+                      key: _wordDataKey[i].key,
+                    ))
+                  ])
+              .toList(),
         ),
       ),
     );
   }
 
-  TextStyle _isPlayed(double offsetInSeconds) {
-    if (_position.inSeconds > offsetInSeconds) {
-      return TextStyle(fontSize: 25, color: Colors.black);
-    } else {
-      return TextStyle(
-          fontSize: 25, color: Color.fromARGB(0xFF, 0x88, 0x88, 0x88));
+  void onPositionChanaged(Duration position) {
+    _position = position;
+    var index = _findPlayingWord();
+    print("find index: $index");
+
+    if (index >= 0 && index < _wordDataKey.length) {
+      Scrollable.ensureVisible(
+        _wordDataKey[index].key.currentContext,
+        alignment: 0.2,
+        duration: Duration(milliseconds: 500),
+      );
     }
   }
 
@@ -87,25 +88,4 @@ class TranscriptContainerWidgetState extends State<TranscriptContainerWidget> {
       }
     });
   }
-
-  void onPositionChanaged(Duration position) {
-    setState(() {
-      _position = position;
-    });
-
-    var index = _findPlayingWord();
-
-    Scrollable.ensureVisible(
-      _wordDataKey[index].key.currentContext,
-      alignment: 0.2,
-      duration: Duration(milliseconds: 500),
-    );
-  }
-}
-
-class WordDataWrapper {
-  final GlobalKey key;
-  final WordData data;
-
-  WordDataWrapper(this.key, this.data);
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'player_bloc.dart';
-import 'package:transcript_example/extension_methods/duration_extensions.dart';
+import '../extension_methods/duration_extensions.dart';
 
 class ProgressSlider extends StatefulWidget {
   final PlayerBloc playerBloc;
