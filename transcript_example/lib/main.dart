@@ -18,13 +18,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Transcript Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Transcript Demo Page'),
-    );
+        title: 'Transcript Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: BlocProvider<DisplayContentBloc>(
+            create: (BuildContext context) => DisplayContentBloc(),
+            child: MyHomePage(title: 'Flutter Transcript Demo Page')));
   }
 }
 
@@ -37,7 +38,27 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(title)),
+        appBar: AppBar(
+          title: Text(title),
+          actions: [
+            PopupMenuButton(
+              onSelected: (_) {
+                BlocProvider.of<DisplayContentBloc>(context)
+                    .add(DisplayEvent(type: _));
+              },
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem(
+                  value: DisplayContentType.raw,
+                  child: Text("存文字"),
+                ),
+                PopupMenuItem(
+                  value: DisplayContentType.segements,
+                  child: Text("段落"),
+                ),
+              ],
+            )
+          ],
+        ),
         body: Column(
           children: [
             Expanded(
@@ -47,10 +68,7 @@ class MyHomePage extends StatelessWidget {
                 if (!snapshot.hasData) {
                   return Container();
                 } else {
-                  return BlocProvider<DisplayContentBloc>(
-                    create: (BuildContext context) => DisplayContentBloc(),
-                    child: TranscriptContainer(playerBloc, snapshot.data),
-                  );
+                  return TranscriptContainer(playerBloc, snapshot.data);
                 }
               },
             )),
