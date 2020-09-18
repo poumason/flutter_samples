@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transcript_example/player/player_bloc.dart';
 import 'package:transcript_example/player/progress_slider.dart';
+import 'package:transcript_example/transcript_container_widget.dart';
+
+import 'stt.dart';
 
 void main() {
   runApp(MyApp());
@@ -53,11 +59,27 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Column(
           children: [
             Expanded(
-              child: Container(),
-            ),
+                child: FutureBuilder(
+              future: _loadFromAsset(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Container();
+                } else {
+                  return TranscriptContainerWidget(
+                      playerBloc, snapshot.data.words);
+                }
+              },
+            )),
             _buildPlayerBar()
           ],
         ));
+  }
+
+  Future<STT> _loadFromAsset() async {
+    var raw = await rootBundle.loadString("assets/transcript.json");
+    var json = jsonDecode(raw);
+    var sttObject = STT.fromJson(json);
+    return sttObject;
   }
 
   Widget _buildPlayerBar() {
@@ -65,7 +87,11 @@ class _MyHomePageState extends State<MyHomePage> {
         margin: EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 10),
         child: Column(
           children: [
-            ProgressSlider(playerBloc, showText: true, enableDrag: true,),
+            ProgressSlider(
+              playerBloc,
+              showText: true,
+              enableDrag: true,
+            ),
             BlocBuilder(
               cubit: playerBloc,
               builder: (context, state) {

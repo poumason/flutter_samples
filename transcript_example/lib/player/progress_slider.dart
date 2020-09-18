@@ -25,6 +25,15 @@ class ProgressSliderState extends State<ProgressSlider> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    stopTimer();
+    super.dispose();
+  }
+
+  void startTimer() {
     timer = Timer.periodic(Duration(milliseconds: 100), (t) {
       if (isSeeking) {
         return;
@@ -33,10 +42,8 @@ class ProgressSliderState extends State<ProgressSlider> {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    timer.cancel();
+  void stopTimer() {
+    timer?.cancel();
   }
 
   @override
@@ -45,11 +52,12 @@ class ProgressSliderState extends State<ProgressSlider> {
     var duration = widget.playerBloc.duration;
 
     return BlocListener(
+        cubit: widget.playerBloc,
         listener: (context, state) {
-          if (!state is PlayerBlocPlayingState) {
-            isSeeking = true;
+          if (state is PlayerBlocPlayingState) {
+            startTimer();
           } else {
-            isSeeking = false;
+            stopTimer();
           }
         },
         child: Offstage(
@@ -61,7 +69,7 @@ class ProgressSliderState extends State<ProgressSlider> {
             children: [
               widget.showText
                   ? Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 2),
                       child: Text(position.getFormattedMinuteSecondPosition()),
                     )
                   : Container(),
@@ -75,7 +83,7 @@ class ProgressSliderState extends State<ProgressSlider> {
               ),
               widget.showText
                   ? Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 2),
                       child: Text(duration.getFormattedMinuteSecondPosition()),
                     )
                   : Container(),
