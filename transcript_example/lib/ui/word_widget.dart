@@ -41,8 +41,6 @@ class WordWidgetState extends State<WordWidget> {
 
   TextStyle _isPlayed(double offsetInSeconds) {
     if (_position.inMicroseconds >= (widget._data.offset * 100 / 1000)) {
-      print(
-          '${widget._data.word}: c:$_position, ${_position.inMicroseconds}, off: ${(widget._data.offset / 1000)}');
       return TextStyle(fontSize: 25, color: Colors.black);
     } else {
       return TextStyle(
