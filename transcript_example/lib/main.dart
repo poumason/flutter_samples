@@ -49,7 +49,7 @@ class MyHomePage extends StatelessWidget {
               itemBuilder: (BuildContext context) => [
                 PopupMenuItem(
                   value: DisplayContentType.raw,
-                  child: Text("存文字"),
+                  child: Text("純文字"),
                 ),
                 PopupMenuItem(
                   value: DisplayContentType.segements,

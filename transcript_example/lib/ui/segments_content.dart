@@ -11,7 +11,7 @@ class SegmentsContent extends StatefulWidget {
   final List<SegmentResult> _segments;
   final bool enableTranscript;
 
-  SegmentsContent(this._playerBloc, this._segments, {this.enableTranscript});
+  SegmentsContent(this._playerBloc, this._segments, {this.enableTranscript = false});
 
   @override
   State<StatefulWidget> createState() => SegmentContentState();
