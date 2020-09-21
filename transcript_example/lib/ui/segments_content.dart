@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../ui/segment_words.dart';
 import '../model/stt.dart';
 import '../player/player_bloc.dart';
 import '../extension_methods/duration_extensions.dart';
@@ -8,8 +9,9 @@ import '../extension_methods/duration_extensions.dart';
 class SegmentsContent extends StatefulWidget {
   final PlayerBloc _playerBloc;
   final List<SegmentResult> _segments;
+  final bool enableTranscript;
 
-  SegmentsContent(this._playerBloc, this._segments);
+  SegmentsContent(this._playerBloc, this._segments, {this.enableTranscript});
 
   @override
   State<StatefulWidget> createState() => SegmentContentState();
@@ -45,6 +47,7 @@ class SegmentContentState extends State<SegmentsContent> {
 
   List<Widget> _buildSegmentPages() {
     return widget._segments.map((e) {
+      var nBest = e.nBest.first;
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: SingleChildScrollView(
@@ -60,12 +63,15 @@ class SegmentContentState extends State<SegmentsContent> {
                       icon: Icon(Icons.music_note),
                       label: Text(
                           "從 ${_convertStartPosition(e.offsetInSeconds)} 開始")),
-                  SelectableText(
-                    "${e.nBest.first.display}\n",
-                    style: TextStyle(fontSize: 25, color: Colors.black),
-                    showCursor: true,
-                    toolbarOptions: ToolbarOptions(copy: true, selectAll: true),
-                  )
+                  widget.enableTranscript == false
+                      ? SelectableText(
+                          "${nBest.display}\n",
+                          style: TextStyle(fontSize: 25, color: Colors.black),
+                          showCursor: true,
+                          toolbarOptions:
+                              ToolbarOptions(copy: true, selectAll: true),
+                        )
+                      : SegmentWords(widget._playerBloc, nBest.words)
                 ]),
           ));
     }).toList();

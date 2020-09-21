@@ -35,15 +35,14 @@ class WordWidgetState extends State<WordWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(TextSpan(
-        text: widget._data.word,
-        style: _isPlayed(widget._data.offsetInSeconds)));
+    return Text(widget._data.word,
+        softWrap: true, style: _isPlayed(widget._data.offsetInSeconds));
   }
 
   TextStyle _isPlayed(double offsetInSeconds) {
-    if (_position.inSeconds >= offsetInSeconds) {
-      // print(
-      //     "current seoncds: ${_position.inSeconds}, offsetInSeconds: $offsetInSeconds");
+    if (_position.inMicroseconds >= (widget._data.offset * 100 / 1000)) {
+      print(
+          '${widget._data.word}: c:$_position, ${_position.inMicroseconds}, off: ${(widget._data.offset / 1000)}');
       return TextStyle(fontSize: 25, color: Colors.black);
     } else {
       return TextStyle(

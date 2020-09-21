@@ -21,6 +21,8 @@ class TranscriptContainer extends StatelessWidget {
             case DisplayContentType.segements:
               return SegmentsContent(_playerBloc, _data.segmentResults);
             case DisplayContentType.words:
+              return SegmentsContent(_playerBloc, _data.segmentResults,
+                  enableTranscript: true);
             default:
               return RawContent(_playerBloc, _data.segmentResults);
           }

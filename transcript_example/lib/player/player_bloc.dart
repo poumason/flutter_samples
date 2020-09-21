@@ -35,7 +35,7 @@ class PlayerBloc extends Bloc<PlayerBlocEvent, PlayerBlocState> {
 
   void onPositionChanged(Duration position) {
     _position = position;
-    print(_position);
+    print('${_position.inMilliseconds}/${_position.inMicroseconds}');
   }
 
   void onDurationChanged(Duration duration) {

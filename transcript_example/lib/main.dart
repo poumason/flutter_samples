@@ -55,6 +55,10 @@ class MyHomePage extends StatelessWidget {
                   value: DisplayContentType.segements,
                   child: Text("段落"),
                 ),
+                PopupMenuItem(
+                  value: DisplayContentType.words,
+                  child: Text("段落逐字"),
+                ),
               ],
             )
           ],
