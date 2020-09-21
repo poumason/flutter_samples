@@ -45,26 +45,29 @@ class SegmentContentState extends State<SegmentsContent> {
 
   List<Widget> _buildSegmentPages() {
     return widget._segments.map((e) {
-      return SingleChildScrollView(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            RaisedButton.icon(
-                onPressed: () {
-                  widget._playerBloc.add(PlayerBlocSeekEvent(
-                      Duration(seconds: e.offsetInSeconds.toInt())));
-                },
-                icon: Icon(Icons.music_note),
-                label:
-                    Text("從 ${_convertStartPosition(e.offsetInSeconds)} 開始")),
-            SelectableText(
-              "${e.nBest.first.display}\n",
-              style: TextStyle(fontSize: 25, color: Colors.black),
-              showCursor: true,
-              toolbarOptions: ToolbarOptions(copy: true, selectAll: true),
-            )
-          ]));
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RaisedButton.icon(
+                      onPressed: () {
+                        widget._playerBloc.add(PlayerBlocSeekEvent(
+                            Duration(seconds: e.offsetInSeconds.toInt())));
+                      },
+                      icon: Icon(Icons.music_note),
+                      label: Text(
+                          "從 ${_convertStartPosition(e.offsetInSeconds)} 開始")),
+                  SelectableText(
+                    "${e.nBest.first.display}\n",
+                    style: TextStyle(fontSize: 25, color: Colors.black),
+                    showCursor: true,
+                    toolbarOptions: ToolbarOptions(copy: true, selectAll: true),
+                  )
+                ]),
+          ));
     }).toList();
   }
 
@@ -77,7 +80,6 @@ class SegmentContentState extends State<SegmentsContent> {
     _position = position;
 
     var pageIndex = _findSegmentPage();
-
     if (pageIndex >= 0 && pageIndex != controller.page) {
       controller.jumpToPage(pageIndex);
     }
