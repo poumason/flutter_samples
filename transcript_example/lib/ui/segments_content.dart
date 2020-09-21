@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import '../ui/segment_words.dart';
 import '../model/stt.dart';
 import '../player/player_bloc.dart';
-import '../extension_methods/duration_extensions.dart';
 
 class SegmentsContent extends StatefulWidget {
   final PlayerBloc _playerBloc;
   final List<SegmentResult> _segments;
   final bool enableTranscript;
 
-  SegmentsContent(this._playerBloc, this._segments, {this.enableTranscript = false});
+  SegmentsContent(this._playerBloc, this._segments,
+      {this.enableTranscript = false});
 
   @override
   State<StatefulWidget> createState() => SegmentContentState();
@@ -49,37 +49,16 @@ class SegmentContentState extends State<SegmentsContent> {
     return widget._segments.map((e) {
       var nBest = e.nBest.first;
       return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: SingleChildScrollView(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RaisedButton.icon(
-                      onPressed: () {
-                        widget._playerBloc.add(PlayerBlocSeekEvent(
-                            Duration(seconds: e.offsetInSeconds.toInt())));
-                      },
-                      icon: Icon(Icons.music_note),
-                      label: Text(
-                          "從 ${_convertStartPosition(e.offsetInSeconds)} 開始")),
-                  widget.enableTranscript == false
-                      ? SelectableText(
-                          "${nBest.display}\n",
-                          style: TextStyle(fontSize: 25, color: Colors.black),
-                          showCursor: true,
-                          toolbarOptions:
-                              ToolbarOptions(copy: true, selectAll: true),
-                        )
-                      : SegmentWords(widget._playerBloc, nBest.words)
-                ]),
-          ));
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+        child: SegmentWords(
+          widget._playerBloc,
+          Duration(seconds: e.offsetInSeconds.toInt()),
+          nBest.display,
+          nBest.words,
+          enableTranscript: widget.enableTranscript,
+        ),
+      );
     }).toList();
-  }
-
-  String _convertStartPosition(double seconds) {
-    var duration = Duration(seconds: seconds.toInt());
-    return duration.getFormattedMinuteSecondPosition();
   }
 
   void onPositionChanged(Duration position) {
