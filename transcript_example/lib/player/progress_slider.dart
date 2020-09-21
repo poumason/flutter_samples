@@ -74,12 +74,16 @@ class ProgressSliderState extends State<ProgressSlider> {
                     )
                   : Container(),
               Expanded(
-                child: widget.enableDrag
-                    ? _buildDragProgressBar(position.inMilliseconds.toDouble(),
-                        duration.inMilliseconds.toDouble())
-                    : _buildNotDragProgressBar(
-                        position.inMilliseconds.toDouble(),
-                        duration.inMilliseconds.toDouble()),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: widget.enableDrag
+                      ? _buildDragProgressBar(
+                          position.inMilliseconds.toDouble(),
+                          duration.inMilliseconds.toDouble())
+                      : _buildNotDragProgressBar(
+                          position.inMilliseconds.toDouble(),
+                          duration.inMilliseconds.toDouble()),
+                ),
               ),
               widget.showText
                   ? Padding(

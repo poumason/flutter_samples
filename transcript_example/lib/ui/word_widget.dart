@@ -35,11 +35,11 @@ class WordWidgetState extends State<WordWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(widget._data.word,
-        softWrap: true, style: _isPlayed(widget._data.offsetInSeconds));
+    return Text(widget._data.word, softWrap: true, style: _isPlayed());
   }
 
-  TextStyle _isPlayed(double offsetInSeconds) {
+  TextStyle _isPlayed() {
+    // Offset	The time (in 100-nanosecond units) at which the recognized speech begins in the audio stream.
     if (_position.inMicroseconds >= (widget._data.offset * 100 / 1000)) {
       return TextStyle(fontSize: 25, color: Colors.black);
     } else {
