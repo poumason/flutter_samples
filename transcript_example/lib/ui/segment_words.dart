@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:transcript_example/ui/custom_text_selection_controls.dart';
 import '../ui/word_widget.dart';
 import '../model/word_data_wrapper.dart';
 import '../model/stt.dart';
@@ -29,6 +31,7 @@ class SegmentWordsState extends State<SegmentWords> {
   Duration _position;
   ScrollController _scrollController;
   int _focusWordIndex;
+  CustomTextSelectionControls _customTextSelectionControls;
 
   @override
   void initState() {
@@ -41,6 +44,7 @@ class SegmentWordsState extends State<SegmentWords> {
         ._playerBloc.player.onAudioPositionChanged
         .listen(onPositionChanaged);
     _scrollController = ScrollController();
+    _customTextSelectionControls = CustomTextSelectionControls();
   }
 
   @override
@@ -68,13 +72,14 @@ class SegmentWordsState extends State<SegmentWords> {
                 label: Text(
                     '從 ${widget._startDuration.getFormattedMinuteSecondPosition()} 開始')),
             widget.enableTranscript == false
-                ? SelectableText(
+                ? ExtendedText(
                     '${widget._displayText}\n',
                     style: TextStyle(fontSize: 25, color: Colors.black),
-                    showCursor: true,
-                    toolbarOptions: ToolbarOptions(copy: true, selectAll: true),
+                    softWrap: true,
+                    selectionEnabled: true,
+                    textSelectionControls: _customTextSelectionControls,
                   )
-                : Text.rich(
+                : ExtendedText.rich(
                     TextSpan(
                       style: TextStyle(
                           fontSize: 25,
@@ -90,7 +95,11 @@ class SegmentWordsState extends State<SegmentWords> {
                               ])
                           .toList(),
                     ),
-                  ),
+                    style: TextStyle(fontSize: 25, color: Colors.black),
+                    softWrap: true,
+                    selectionEnabled: true,
+                    textSelectionControls: _customTextSelectionControls,
+                  )
           ]),
     );
   }

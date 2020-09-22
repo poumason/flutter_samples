@@ -1,3 +1,4 @@
+import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../player/player_bloc.dart';
@@ -17,15 +18,43 @@ class TranscriptContainer extends StatelessWidget {
     return BlocBuilder(
         cubit: BlocProvider.of<DisplayContentBloc>(context),
         builder: (BuildContext context, DisplayContentState state) {
+          Widget result;
+
           switch (state.type) {
             case DisplayContentType.segements:
-              return SegmentsContent(_playerBloc, _data.segmentResults);
+              result = SegmentsContent(_playerBloc, _data.segmentResults);
+              break;
             case DisplayContentType.words:
-              return SegmentsContent(_playerBloc, _data.segmentResults,
+              result = SegmentsContent(_playerBloc, _data.segmentResults,
                   enableTranscript: true);
+              break;
             default:
-              return RawContent(_playerBloc, _data.segmentResults);
+              result = RawContent(_playerBloc, _data.segmentResults);
+              break;
           }
+
+          return ExtendedTextSelectionPointerHandler(
+            builder: (List<ExtendedTextSelectionState> states) {
+              return Listener(
+                child: result,
+                behavior: HitTestBehavior.translucent,
+                onPointerDown: (PointerDownEvent value) {
+                  for (final state in states) {
+                    if (!state.containsPosition(value.position)) {
+                      //clear other selection
+                      state.clearSelection();
+                    }
+                  }
+                },
+                onPointerMove: (PointerMoveEvent value) {
+                  //clear other selection
+                  for (final state in states) {
+                    state.clearSelection();
+                  }
+                },
+              );
+            },
+          );
         });
   }
 }
