@@ -37,27 +37,31 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bloc = BlocProvider.of<DisplayContentBloc>(context);
+
     return Scaffold(
         appBar: AppBar(
           title: Text(title),
           actions: [
             PopupMenuButton(
               onSelected: (_) {
-                BlocProvider.of<DisplayContentBloc>(context)
-                    .add(DisplayEvent(type: _));
+                bloc.add(DisplayEvent(type: _));
               },
               itemBuilder: (BuildContext context) => [
-                PopupMenuItem(
+                CheckedPopupMenuItem(
+                  checked: bloc.state.type == DisplayContentType.raw,
+                  child: Text('純文字'),
                   value: DisplayContentType.raw,
-                  child: Text("純文字"),
                 ),
-                PopupMenuItem(
+                CheckedPopupMenuItem(
+                  checked: bloc.state.type == DisplayContentType.segements,
+                  child: Text('段落'),
                   value: DisplayContentType.segements,
-                  child: Text("段落"),
                 ),
-                PopupMenuItem(
+                CheckedPopupMenuItem(
+                  checked: bloc.state.type == DisplayContentType.words,
+                  child: Text('段落逐字'),
                   value: DisplayContentType.words,
-                  child: Text("段落逐字"),
                 ),
               ],
             )
@@ -82,7 +86,7 @@ class MyHomePage extends StatelessWidget {
   }
 
   Future<STT> _loadFromAsset() async {
-    var raw = await rootBundle.loadString("assets/transcript.json");
+    var raw = await rootBundle.loadString('assets/transcript.json');
     var json = jsonDecode(raw);
     var sttObject = STT.fromJson(json);
     return sttObject;

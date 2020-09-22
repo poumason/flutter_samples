@@ -1,0 +1,6 @@
+include: package:pedantic/analysis_options.yaml
+linter:
+  rules:
+    close_sinks: false
+    library_prefixes: false
+    prefer_relative_imports: true

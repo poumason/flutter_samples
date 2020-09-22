@@ -66,10 +66,10 @@ class SegmentWordsState extends State<SegmentWords> {
                 },
                 icon: Icon(Icons.music_note),
                 label: Text(
-                    "從 ${widget._startDuration.getFormattedMinuteSecondPosition()} 開始")),
+                    '從 ${widget._startDuration.getFormattedMinuteSecondPosition()} 開始')),
             widget.enableTranscript == false
                 ? SelectableText(
-                    "${widget._displayText}\n",
+                    '${widget._displayText}\n',
                     style: TextStyle(fontSize: 25, color: Colors.black),
                     showCursor: true,
                     toolbarOptions: ToolbarOptions(copy: true, selectAll: true),

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:transcript_example/model/stt.dart';
-import 'package:transcript_example/player/player_bloc.dart';
+import '../model/stt.dart';
+import '../player/player_bloc.dart';
 
 class WordWidget extends StatefulWidget {
   final PlayerBloc _playerBloc;

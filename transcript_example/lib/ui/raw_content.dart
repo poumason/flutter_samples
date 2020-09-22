@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:transcript_example/model/stt.dart';
-import 'package:transcript_example/player/player_bloc.dart';
+import '../model/stt.dart';
+import '../player/player_bloc.dart';
 import '../extension_methods/duration_extensions.dart';
 
 class RawContent extends StatelessWidget {
@@ -34,9 +34,9 @@ class RawContent extends StatelessWidget {
                 },
                 icon: Icon(Icons.music_note),
                 label:
-                    Text("從 ${_convertStartPosition(e.offsetInSeconds)} 開始")),
+                    Text('從 ${_convertStartPosition(e.offsetInSeconds)} 開始')),
             SelectableText(
-              "${e.nBest.first.display}\n",
+              '${e.nBest.first.display}\n',
               style: TextStyle(fontSize: 25, color: Colors.black),
               showCursor: true,
               toolbarOptions: ToolbarOptions(copy: true, selectAll: true),
@@ -57,7 +57,7 @@ class RawContent extends StatelessWidget {
         children: Iterable.generate(_segments.length, (i) => i)
             .expand((i) => [
                   TextSpan(
-                    text: "${_segments[i].nBest.first.display}\n\n",
+                    text: '${_segments[i].nBest.first.display}\n\n',
                   )
                 ])
             .toList(),
