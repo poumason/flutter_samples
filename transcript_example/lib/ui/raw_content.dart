@@ -1,17 +1,16 @@
 import 'package:extended_text/extended_text.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../model/stt.dart';
 import '../player/player_bloc.dart';
 import '../extension_methods/duration_extensions.dart';
-import 'custom_text_selection_controls.dart';
+// import 'custom_text_selection_controls.dart';
 
 class RawContent extends StatelessWidget {
   final PlayerBloc _playerBloc;
   final List<SegmentResult> _segments;
 
   RawContent(this._playerBloc, this._segments);
-  final _customTextSelectionControls = CustomTextSelectionControls();
+  // final _customTextSelectionControls = CustomTextSelectionControls();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,7 @@ class RawContent extends StatelessWidget {
               style: TextStyle(fontSize: 25, color: Colors.black),
               softWrap: true,
               selectionEnabled: true,
-              textSelectionControls: _customTextSelectionControls,
+              // selectionControls: _customTextSelectionControls,
             )
           ]);
     }).toList();

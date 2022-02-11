@@ -16,7 +16,7 @@ class TranscriptContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
-        cubit: BlocProvider.of<DisplayContentBloc>(context),
+        bloc: BlocProvider.of<DisplayContentBloc>(context),
         builder: (BuildContext context, DisplayContentState state) {
           Widget result;
 

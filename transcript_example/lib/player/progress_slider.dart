@@ -52,7 +52,7 @@ class ProgressSliderState extends State<ProgressSlider> {
     var duration = widget.playerBloc.duration;
 
     return BlocListener(
-        cubit: widget.playerBloc,
+        bloc: widget.playerBloc,
         listener: (context, state) {
           if (state is PlayerBlocPlayingState) {
             startTimer();

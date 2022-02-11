@@ -38,6 +38,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var bloc = BlocProvider.of<DisplayContentBloc>(context);
+    // var bloc = context.select((DisplayContentBloc bloc) => bloc);
 
     return Scaffold(
         appBar: AppBar(
@@ -103,7 +104,7 @@ class MyHomePage extends StatelessWidget {
               enableDrag: true,
             ),
             BlocBuilder(
-              cubit: playerBloc,
+              bloc: playerBloc,
               builder: (context, state) {
                 var isPlaying = playerBloc.state is PlayerBlocPlayingState;
                 return IconButton(

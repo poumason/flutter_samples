@@ -3,7 +3,7 @@ import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:transcript_example/ui/custom_text_selection_controls.dart';
+// import './custom_text_selection_controls.dart';
 import '../ui/word_widget.dart';
 import '../model/word_data_wrapper.dart';
 import '../model/stt.dart';
@@ -31,7 +31,7 @@ class SegmentWordsState extends State<SegmentWords> {
   Duration _position;
   ScrollController _scrollController;
   int _focusWordIndex;
-  CustomTextSelectionControls _customTextSelectionControls;
+  // CustomTextSelectionControls _customTextSelectionControls;
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class SegmentWordsState extends State<SegmentWords> {
         ._playerBloc.player.onAudioPositionChanged
         .listen(onPositionChanaged);
     _scrollController = ScrollController();
-    _customTextSelectionControls = CustomTextSelectionControls();
+    // _customTextSelectionControls = CustomTextSelectionControls();
   }
 
   @override
@@ -77,7 +77,7 @@ class SegmentWordsState extends State<SegmentWords> {
                     style: TextStyle(fontSize: 25, color: Colors.black),
                     softWrap: true,
                     selectionEnabled: true,
-                    textSelectionControls: _customTextSelectionControls,
+                    // selectionControls: _customTextSelectionControls,
                   )
                 : ExtendedText.rich(
                     TextSpan(
@@ -98,7 +98,7 @@ class SegmentWordsState extends State<SegmentWords> {
                     style: TextStyle(fontSize: 25, color: Colors.black),
                     softWrap: true,
                     selectionEnabled: true,
-                    textSelectionControls: _customTextSelectionControls,
+                    // selectionControls: _customTextSelectionControls,
                   )
           ]),
     );

@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 class PlayerBloc extends Bloc<PlayerBlocEvent, PlayerBlocState> {
   final AudioPlayer player = AudioPlayer();
 
-  StreamSubscription<AudioPlayerState> onPlayerStateChangedSubscription;
+  StreamSubscription<PlayerState> onPlayerStateChangedSubscription;
   StreamSubscription<Duration> onDurationChangedSubscription;
   StreamSubscription<Duration> onPositionChangedSubscription;
 
@@ -21,9 +21,63 @@ class PlayerBloc extends Bloc<PlayerBlocEvent, PlayerBlocState> {
     onDurationChangedSubscription =
         player.onDurationChanged.listen(onDurationChanged);
     player.onAudioPositionChanged.listen(onPositionChanged);
+
+    on<PlayerBlocEvent>((event, emit) async {
+      if (event is PlayerBlocPlayEvent) {
+        emit(PlayerBlocLoadingState());
+        var file = await _getAudioFilePath();
+        var result = await player.play(file, isLocal: true);
+        emit(result == 1 ? PlayerBlocPlayingState() : PlayerBlocStoppedState());
+      }
+
+      if (event is PlayerBlocStopEvent) {
+        await player.stop();
+        emit(PlayerBlocStoppedState());
+      }
+
+      if (event is PlayerBlocStoppedEvent) {
+        emit(PlayerBlocStoppedState());
+      }
+
+      if (event is PlayerBlocPauseEvent) {
+        var state = this.state;
+        if (state is PlayerBlocPlayingState) {
+          await player.pause();
+          emit(PlayerBlocPausedState());
+        }
+      }
+
+      if (event is PlayerBlocResumeEvent) {
+        var state = this.state;
+        if (state is PlayerBlocPausedState) {
+          await player.resume();
+          emit(PlayerBlocPlayingState());
+        } else {
+          add(PlayerBlocPlayEvent());
+        }
+      }
+
+      if (event is PlayerBlocSeekEvent) {
+        if (!isIdle) {
+          await player.seek(event.position);
+        }
+      }
+
+      if (event is PlayerBlocGoBackwardEvent) {
+        await _calcuateNewPosition(true);
+      }
+
+      if (event is PlayerBlocGoForwardEvent) {
+        await _calcuateNewPosition(false);
+      }
+
+      if (event is PlayerBlocEnableSkipAdvEvent) {
+        emit(PlayerBlocSkipAdvState());
+      }
+    });
   }
 
-  void onPlayerStateChanged(AudioPlayerState state) {}
+  void onPlayerStateChanged(PlayerState state) {}
 
   Duration get position {
     if (!isIdle) {
@@ -52,8 +106,8 @@ class PlayerBloc extends Bloc<PlayerBlocEvent, PlayerBlocState> {
 
   bool get isIdle {
     return player.state == null ||
-        player.state == AudioPlayerState.COMPLETED ||
-        player.state == AudioPlayerState.STOPPED;
+        player.state == PlayerState.COMPLETED ||
+        player.state == PlayerState.STOPPED;
   }
 
   @override
